@@ -72,6 +72,33 @@ style-zone-server/
 ## Repository
 [https://github.com/parvejme24/style-zone-server.git](https://github.com/parvejme24/style-zone-server.git)
 
+## API Documentation
+
+- **Base URL:** `http://localhost:5000/api`
+- **Backend Live URL:** `[YOUR_LIVE_URL_HERE]`
+
+API documentation for each module is available in the [docs](docs/) folder:
+
+- [Auth Module](docs/auth.md)
+- [User Module](docs/user.md)
+- [Category Module](docs/category.md)
+- [Product Module](docs/product.md)
+- [Order Module](docs/order.md)
+- [Review Module](docs/review.md)
+- [Chat Module](docs/chat.md)
+- [Notification Module](docs/notification.md)
+- [Wishlist Module](docs/wishlist.md)
+- [Size Guide Module](docs/sizeGuide.md)
+- [Newsletter Module](docs/newsletter.md)
+- [Discount Module](docs/discount.md)
+
+Each module documentation contains:
+- Endpoints
+- Request/Response examples
+- Request type (GET, POST, etc.)
+- Example data for testing
+- Description of each endpoint
+
 ---
 
 Feel free to contribute or open issues! 
