@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { ReviewModel } from "./review.model";
-import { Prisma } from "../../generated/prisma";
+import { PrismaClient } from "../../generated/prisma";
+
+const prisma = new PrismaClient();
 
 export const getReviewsByProductId = async (req: Request, res: Response) => {
   try {
@@ -21,20 +23,28 @@ export const getReviewById = async (req: Request, res: Response) => {
   }
 };
 
-export const createReview = async (req: Request, res: Response) => {
+export const createReviewForProduct = async (req: Request, res: Response) => {
   try {
-    const data: Prisma.ProductReviewRatingCreateInput = req.body;
-    const review = await ReviewModel.create(data);
+    const { productId } = req.params;
+    if (!productId) return res.status(400).json({ error: "Product ID is required" });
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    const { user_id, rating, comment } = req.body;
+    const review = await ReviewModel.create({
+      product: { connect: { id: productId } },
+      user_id,
+      rating,
+      comment
+    });
     res.status(201).json(review);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create review" });
+    res.status(500).json({ error: "Failed to create review for product" });
   }
 };
 
 export const updateReview = async (req: Request, res: Response) => {
   try {
-    const data: Prisma.ProductReviewRatingUpdateInput = req.body;
-    const review = await ReviewModel.update(req.params.id, data);
+    const review = await ReviewModel.update(req.params.id, req.body);
     res.json(review);
   } catch (error) {
     res.status(500).json({ error: "Failed to update review" });
