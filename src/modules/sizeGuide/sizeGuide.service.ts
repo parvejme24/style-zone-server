@@ -1,9 +1,10 @@
 import { SizeGuideModel } from './sizeGuide.model';
+import { Prisma } from '../../generated/prisma';
 
 export const SizeGuideService = {
-  getAll: () => SizeGuideModel.findAll(),
   getById: (id: string) => SizeGuideModel.findById(id),
-  create: (data: any) => SizeGuideModel.create(data),
-  update: (id: string, data: any) => SizeGuideModel.update(id, data),
+  getByCategoryAndBrand: (categoryId: string, brandId: string) => SizeGuideModel.findByCategoryAndBrand(categoryId, brandId),
+  createForProduct: (categoryId: string, brandId: string, sizeData: Prisma.InputJsonValue) => SizeGuideModel.createForProduct(categoryId, brandId, sizeData),
+  update: (id: string, data: Prisma.SizeGuideUpdateInput) => SizeGuideModel.update(id, data),
   delete: (id: string) => SizeGuideModel.delete(id),
 };

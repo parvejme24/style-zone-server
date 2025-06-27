@@ -15,6 +15,17 @@ export const ReviewModel = {
   findById: async (id: string): Promise<ProductReviewRating | null> => {
     return prisma.productReviewRating.findUnique({ where: { id } });
   },
+  createForProduct: async (
+    product_id: string,
+    data: Omit<Prisma.ProductReviewRatingCreateInput, 'product'>
+  ): Promise<ProductReviewRating> => {
+    return prisma.productReviewRating.create({
+      data: {
+        ...data,
+        product: { connect: { id: product_id } }
+      }
+    });
+  },
   create: async (
     data: Prisma.ProductReviewRatingCreateInput
   ): Promise<ProductReviewRating> => {

@@ -9,8 +9,13 @@ export const DiscountModel = {
   findById: async (id: string): Promise<FlashSale | null> => {
     return prisma.flashSale.findUnique({ where: { id } });
   },
-  create: async (data: Prisma.FlashSaleCreateInput): Promise<FlashSale> => {
-    return prisma.flashSale.create({ data });
+  createForProduct: async (product_id: string, data: Omit<Prisma.FlashSaleCreateInput, 'product'>): Promise<FlashSale> => {
+    return prisma.flashSale.create({
+      data: {
+        ...data,
+        product: { connect: { id: product_id } }
+      }
+    });
   },
   update: async (
     id: string,
