@@ -10,6 +10,9 @@ export const SizeGuideModel = {
   findById: async (id: string): Promise<SizeGuide | null> => {
     return prisma.sizeGuide.findUnique({ where: { id } });
   },
+  findByCategoryAndBrand: async (category_id: string, brand_id: string): Promise<SizeGuide | null> => {
+    return prisma.sizeGuide.findFirst({ where: { category_id, brand_id } });
+  },
   create: async (data: Prisma.SizeGuideCreateInput): Promise<SizeGuide> => {
     return prisma.sizeGuide.create({ data });
   },

@@ -80,7 +80,6 @@ model Product {
   images         String[] // PostgreSQL supports text[]
   is_featured    Boolean        @default(false)
   is_new_arrival Boolean        @default(false)
-  created_by     String // Consider adding a User relation if applicable
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

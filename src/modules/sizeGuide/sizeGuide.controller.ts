@@ -1,14 +1,8 @@
 import { Request, Response } from "express";
 import { SizeGuideModel } from "./sizeGuide.model";
+import { PrismaClient } from '../../generated/prisma';
 
-export const getAllSizeGuides = async (req: Request, res: Response) => {
-  try {
-    const sizeGuides = await SizeGuideModel.findAll();
-    res.json(sizeGuides);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch size guides" });
-  }
-};
+const prisma = new PrismaClient();
 
 export const getSizeGuideById = async (req: Request, res: Response) => {
   try {
@@ -20,12 +14,33 @@ export const getSizeGuideById = async (req: Request, res: Response) => {
   }
 };
 
-export const createSizeGuide = async (req: Request, res: Response) => {
+export const getSizeGuideByProductId = async (req: Request, res: Response) => {
   try {
-    const sizeGuide = await SizeGuideModel.create(req.body);
+    const product = await prisma.product.findUnique({ where: { id: req.params.productId } });
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    const sizeGuide = await SizeGuideModel.findByCategoryAndBrand(product.category_id, product.brand_id);
+    if (!sizeGuide) return res.status(404).json({ error: "Size guide not found for this product" });
+    res.json(sizeGuide);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch size guide for product" });
+  }
+};
+
+export const createSizeGuideForProduct = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+    if (!productId) return res.status(400).json({ error: "Product ID is required" });
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    const { size_data } = req.body;
+    const sizeGuide = await SizeGuideModel.create({
+      category: { connect: { id: product.category_id } },
+      brand: { connect: { id: product.brand_id } },
+      size_data
+    });
     res.status(201).json(sizeGuide);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create size guide" });
+    res.status(500).json({ error: "Failed to create size guide for product" });
   }
 };
 

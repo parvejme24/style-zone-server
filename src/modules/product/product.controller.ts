@@ -20,6 +20,16 @@ export const getProductById = async (req: Request, res: Response) => {
   }
 };
 
+export const getProductFullById = async (req: Request, res: Response) => {
+  try {
+    const product = await ProductModel.findFullById(req.params.id);
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch product details" });
+  }
+};
+
 export const createProduct = async (req: Request, res: Response) => {
   try {
     const product = await ProductModel.create(req.body);

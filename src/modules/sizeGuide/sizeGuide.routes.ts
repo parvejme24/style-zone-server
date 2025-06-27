@@ -1,17 +1,17 @@
 import { Router } from "express";
 import {
-  getAllSizeGuides,
   getSizeGuideById,
-  createSizeGuide,
+  getSizeGuideByProductId,
+  createSizeGuideForProduct,
   updateSizeGuide,
   deleteSizeGuide,
 } from "./sizeGuide.controller";
 
 const router = Router();
 
-router.get("/size-guides", getAllSizeGuides);
 router.get("/size-guides/:id", getSizeGuideById);
-router.post("/size-guides", createSizeGuide);
+router.get("/products/:productId/size-guide", getSizeGuideByProductId);
+router.post("/products/:productId/size-guide", createSizeGuideForProduct);
 router.put("/size-guides/:id", updateSizeGuide);
 router.delete("/size-guides/:id", deleteSizeGuide);
 

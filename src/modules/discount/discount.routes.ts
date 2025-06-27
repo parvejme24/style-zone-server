@@ -9,7 +9,7 @@ import {
 
 const router = Router();
 
-router.get("/products/:productId/discount", getDiscountByProductId);
+router.get("/discounts/:productId", getDiscountByProductId);
 router.get("/discounts/:id", getDiscountById);
 router.post("/discounts", createDiscount);
 router.put("/discounts/:id", updateDiscount);
