@@ -3,6 +3,12 @@ import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { brandRoutes } from './modules/brand';
+import { categoryRoutes } from './modules/category';
+import { productRoutes } from './modules/product';
+import { sizeGuideRoutes } from './modules/sizeGuide';
+import { reviewRoutes } from './modules/review';
+import { discountRoutes } from './modules/discount';
 
 const app: Application = express();
 
@@ -33,6 +39,14 @@ app.get('/', (req: Request, res: Response) => {
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy' });
 });
+
+// Register brand routes
+app.use('/api/v1', brandRoutes);
+app.use('/api/v1', categoryRoutes);
+app.use('/api/v1', productRoutes);
+app.use('/api/v1', sizeGuideRoutes);
+app.use('/api/v1', reviewRoutes);
+app.use('/api/v1', discountRoutes);
 
 // error handling middleware
 app.use((err: any, req: any, res: any, next: any) => {
