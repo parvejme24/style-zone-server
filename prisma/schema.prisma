@@ -14,6 +14,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+model User {
+  id            String   @id @default(uuid())
+  displayName   String
+  email         String   @unique
+  password      String
+  photoUrl      String?
+  designation   String?
+  role          UserRole @default(USER)
+  phone         String?
+  country       String?
+  city          String?
+  stateOrRegion String?
+  postCode      String?
+  balance       Float    @default(0.0)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  otpCode      String? // 6-digit code
+  otpExpiresAt DateTime? // Expiry for OTP
+  isVerified   Boolean   @default(false)
+  refreshToken String? // For refresh token storage (optional, for logout)
+
+  @@index([email])
+  @@map("users")
+}
+
 // Defining the TargetAudience enum for use in the Product model
 enum TargetAudience {
   MAN
@@ -72,12 +104,12 @@ model Product {
   final_price    Decimal        @db.Decimal(10, 2)
   material       String
   target         TargetAudience
-  tags           String[] // PostgreSQL supports text[]
+  tags           String[]
   stock          Int
   total_sales    Int            @default(0)
   average_rating Float          @default(0.0)
   total_reviews  Int            @default(0)
-  images         String[] // PostgreSQL supports text[]
+  images         String[]
   is_featured    Boolean        @default(false)
   is_new_arrival Boolean        @default(false)
 
@@ -101,8 +133,8 @@ model Product {
 model ProductVariant {
   id         String   @id @default(uuid())
   product_id String
-  size       String[] // PostgreSQL supports text[]
-  color      String[] // PostgreSQL supports text[]
+  size       String[]
+  color      String[]
   price      Decimal  @db.Decimal(10, 2)
   stock      Int
   sku        String   @unique
