@@ -42,6 +42,15 @@ app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok", message: "Server is healthy" });
 });
 
+// test route for Vercel
+app.get("/api/test", (req: Request, res: Response) => {
+  res.status(200).json({ 
+    message: "API is working on Vercel!",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Register brand routes
 app.use("/api/v1", authRoutes);
 app.use("/api/v1", userRoutes);
