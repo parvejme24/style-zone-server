@@ -4,6 +4,11 @@ node_modules
 
 /src/generated/prisma
 
-
 package-lock.json
+.vercel
+
+# Build output
+dist/
+*.tsbuildinfo
+
 .vercel
