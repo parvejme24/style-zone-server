@@ -10,6 +10,7 @@ import { sizeGuideRoutes } from "./modules/sizeGuide";
 import { reviewRoutes } from "./modules/review";
 import { discountRoutes } from "./modules/discount";
 import { authRoutes } from "./modules/auth";
+import { userRoutes } from "./modules/user";
 
 const app: Application = express();
 
@@ -43,6 +44,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 // Register brand routes
 app.use("/api/v1", authRoutes);
+app.use("/api/v1", userRoutes);
 app.use("/api/v1", brandRoutes);
 app.use("/api/v1", categoryRoutes);
 app.use("/api/v1", productRoutes);
