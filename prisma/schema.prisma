@@ -13,3 +13,195 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model User {
+  id            String   @id @default(uuid())
+  displayName   String
+  email         String   @unique
+  password      String
+  photoUrl      String?
+  designation   String?
+  role          UserRole @default(USER)
+  phone         String?
+  country       String?
+  city          String?
+  stateOrRegion String?
+  postCode      String?
+  balance       Float    @default(0.0)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  otpCode      String? // 6-digit code
+  otpExpiresAt DateTime? // Expiry for OTP
+  isVerified   Boolean   @default(false)
+  refreshToken String? // For refresh token storage (optional, for logout)
+
+  @@index([email])
+  @@map("users")
+}
+
+// Defining the TargetAudience enum for use in the Product model
+enum TargetAudience {
+  MAN
+  WOMAN
+  WORLD_PERSON
+  CHILDREN_MAN
+  CHILDREN_WOMAN
+  CHILDREN_BOTH
+  UNISEX
+}
+
+// Category model for product categorization
+model Category {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+  image_url   String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  products   Product[]
+  sizeGuides SizeGuide[]
+  flashSales FlashSale[]
+
+  @@index([name])
+  @@map("categories")
+}
+
+// Brand model for product brands
+model Brand {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+  image_url   String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  products   Product[]
+  sizeGuides SizeGuide[]
+
+  @@index([name])
+  @@map("brands")
+}
+
+// Product model for store items
+model Product {
+  id             String         @id @default(uuid())
+  name           String
+  description    String
+  category_id    String
+  brand_id       String
+  base_price     Decimal        @db.Decimal(10, 2)
+  discount       Decimal        @default(0.00) @db.Decimal(10, 2)
+  final_price    Decimal        @db.Decimal(10, 2)
+  material       String
+  target         TargetAudience
+  tags           String[]
+  stock          Int
+  total_sales    Int            @default(0)
+  average_rating Float          @default(0.0)
+  total_reviews  Int            @default(0)
+  images         String[]
+  is_featured    Boolean        @default(false)
+  is_new_arrival Boolean        @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  category   Category              @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  brand      Brand                 @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+  variants   ProductVariant[]
+  reviews    ProductReviewRating[]
+  flashSales FlashSale[]
+
+  @@index([category_id])
+  @@index([brand_id])
+  @@index([is_featured])
+  @@index([is_new_arrival])
+  @@map("products")
+}
+
+// ProductVariant model for product variations (size, color, etc.)
+model ProductVariant {
+  id         String   @id @default(uuid())
+  product_id String
+  size       String[]
+  color      String[]
+  price      Decimal  @db.Decimal(10, 2)
+  stock      Int
+  sku        String   @unique
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([product_id])
+  @@index([sku])
+  @@map("product_variants")
+}
+
+// ProductReviewRating model for user reviews and ratings
+model ProductReviewRating {
+  id         String @id @default(uuid())
+  product_id String
+  user_id    String // Consider adding a User relation if applicable
+  rating     Float
+  comment    String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([product_id])
+  @@index([user_id])
+  @@map("product_review_ratings")
+}
+
+// FlashSale model for time-limited sales
+model FlashSale {
+  id                  String   @id @default(uuid())
+  product_id          String
+  discount_percentage Decimal  @db.Decimal(5, 2)
+  start_time          DateTime
+  end_time            DateTime
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  product    Product   @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+
+  @@index([product_id])
+  @@index([start_time])
+  @@index([end_time])
+  @@map("flash_sales")
+}
+
+// SizeGuide model for size information
+model SizeGuide {
+  id          String @id @default(uuid())
+  category_id String
+  brand_id    String
+  size_data   Json // Using Json for structured size data (e.g., { "S": { "chest": "34in", "waist": "28in" } })
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  category Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  brand    Brand    @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+
+  @@index([category_id])
+  @@index([brand_id])
+  @@map("size_guides")
+}
