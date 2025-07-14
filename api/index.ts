@@ -11,5 +11,7 @@ export default async function handler(req: any, res: any) {
     await connectDB();
     serverInitialized = true;
   }
-  app(req, res);
+
+  // Important: this makes Express work in Vercel
+  return app(req, res);
 }
