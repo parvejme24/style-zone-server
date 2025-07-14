@@ -1,7 +1,6 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import { brandRoutes } from "./modules/brand";
 import { categoryRoutes } from "./modules/category";
