@@ -42,6 +42,11 @@ model User {
   isVerified   Boolean   @default(false)
   refreshToken String? // For refresh token storage (optional, for logout)
 
+  wishlists Wishlist[] @relation("UserWishlists")
+  productReviews ProductReviewRating[] @relation("UserProductReviews")
+  notifications Notification[]
+  orders      Order[]
+
   @@index([email])
   @@map("users")
 }
@@ -121,6 +126,8 @@ model Product {
   variants   ProductVariant[]
   reviews    ProductReviewRating[]
   flashSales FlashSale[]
+  wishlists  Wishlist[] @relation("ProductWishlists")
+  orders     OrderProduct[]
 
   @@index([category_id])
   @@index([brand_id])
@@ -153,7 +160,7 @@ model ProductVariant {
 model ProductReviewRating {
   id         String @id @default(uuid())
   product_id String
-  user_id    String // Consider adding a User relation if applicable
+  user_id    String
   rating     Float
   comment    String
 
@@ -161,6 +168,7 @@ model ProductReviewRating {
   updated_at DateTime @updatedAt
 
   product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  user    User    @relation("UserProductReviews", fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([product_id])
   @@index([user_id])
@@ -204,4 +212,63 @@ model SizeGuide {
   @@index([category_id])
   @@index([brand_id])
   @@map("size_guides")
+}
+
+// Wishlist model for user wishlists
+model Wishlist {
+  id        String   @id @default(uuid())
+  user      User     @relation("UserWishlists", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  product   Product  @relation("ProductWishlists", fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+  @@map("wishlists")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  status    String   // e.g., 'pending', 'processing', 'success', 'cancelled'
+  total     Float
+  createdAt DateTime @default(now())
+  // Add more fields as needed (e.g., products, address, etc.)
+  products  OrderProduct[] @relation("OrderToOrderProduct")
+
+  @@index([userId])
+  @@index([status])
+  @@map("orders")
+}
+
+model OrderProduct {
+  id        String   @id @default(uuid())
+  order     Order    @relation("OrderToOrderProduct", fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  quantity  Int      @default(1)
+  // Add more fields as needed (e.g., price at time of order)
+
+  @@unique([orderId, productId])
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_products")
 }

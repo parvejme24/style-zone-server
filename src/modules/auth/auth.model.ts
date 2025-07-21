@@ -1,4 +1,4 @@
-import { PrismaClient, User } from '../../generated/prisma';
+import { PrismaClient, User } from "../../generated/prisma";
 
 const prisma = new PrismaClient();
 
@@ -9,7 +9,7 @@ export const AuthModel = {
   findById: async (id: string): Promise<User | null> => {
     return prisma.user.findUnique({ where: { id } });
   },
-  create: async (data: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'otpCode' | 'otpExpiresAt' | 'isVerified' | 'refreshToken'>): Promise<User> => {
+  create: async (data: any): Promise<User> => {
     return prisma.user.create({ data });
   },
   update: async (id: string, data: Partial<User>): Promise<User> => {
@@ -18,4 +18,4 @@ export const AuthModel = {
   updateByEmail: async (email: string, data: Partial<User>): Promise<User> => {
     return prisma.user.update({ where: { email }, data });
   },
-}; 
+};

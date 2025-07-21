@@ -72,8 +72,7 @@ export const AuthService = {
   },
 
   refreshToken: async (token: string) => {
-    // Validate refresh token and issue new access token
-    const payload = verifyRefreshToken(token);
+    const payload = verifyRefreshToken(token) as JwtPayload | null;
     if (!payload) throw new Error("Invalid refresh token");
     const user = await AuthModel.findById(payload.userId);
     if (!user || user.refreshToken !== token)

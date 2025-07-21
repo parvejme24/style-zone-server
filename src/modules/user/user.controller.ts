@@ -29,19 +29,7 @@ export const updateUser = async (req: Request, res: Response) => {
     const userInDb = await UserService.getById(userId);
     if (!userInDb) return res.status(404).json({ error: "User not found" });
 
-    // If email is present in request, check it matches DB
-    if ("email" in req.body && req.body.email !== userInDb.email) {
-      return res
-        .status(400)
-        .json({ error: "Email does not match your current email." });
-    }
-    // If password is present in request, check it matches DB
-    if ("password" in req.body && req.body.password !== userInDb.password) {
-      return res
-        .status(400)
-        .json({ error: "Password does not match your current password." });
-    }
-    // Prevent normal users from changing their role
+    // Prevent email/password/role changes by normal users
     const userRole = (req as any).user?.role;
     if (
       "role" in req.body &&
@@ -60,7 +48,6 @@ export const updateUser = async (req: Request, res: Response) => {
     ) {
       delete req.body.role;
     }
-    // Remove email and password from update payload
     if ("email" in req.body) delete req.body.email;
     if ("password" in req.body) delete req.body.password;
 
