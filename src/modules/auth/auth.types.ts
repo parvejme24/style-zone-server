@@ -2,7 +2,6 @@ export interface RegisterRequest {
   displayName: string;
   email: string;
   password: string;
-  // Optionally add more fields as needed
 }
 
 export interface LoginRequest {

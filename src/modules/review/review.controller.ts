@@ -32,7 +32,7 @@ export const createReviewForProduct = async (req: Request, res: Response) => {
     const { user_id, rating, comment } = req.body;
     const review = await ReviewModel.create({
       product: { connect: { id: productId } },
-      user_id,
+      user: { connect: { id: user_id } },
       rating,
       comment
     });

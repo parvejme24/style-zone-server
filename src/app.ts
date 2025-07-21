@@ -10,6 +10,7 @@ import { reviewRoutes } from "./modules/review";
 import { discountRoutes } from "./modules/discount";
 import { authRoutes } from "./modules/auth";
 import { userRoutes } from "./modules/user";
+import dashboardOverviewRoutes from "./modules/dashboardOverview";
 
 const app: Application = express();
 
@@ -58,6 +59,7 @@ app.use("/api/v1", productRoutes);
 app.use("/api/v1", sizeGuideRoutes);
 app.use("/api/v1", reviewRoutes);
 app.use("/api/v1", discountRoutes);
+app.use("/api/v1", dashboardOverviewRoutes);
 
 // error handling middleware
 app.use((err: any, req: any, res: any, next: any) => {

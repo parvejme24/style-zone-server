@@ -59,7 +59,6 @@ export const resetPassword = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
   try {
-    // Assume userId is available in req.user (set by auth middleware)
     const userId = (req as any).user?.userId;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
     const result = await AuthService.logout(userId);
